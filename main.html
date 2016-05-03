@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<link rel="stylesheet" type="text/css" href="screen.css">
+		<script type="text/javascript" src="lib.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/ace/1.2.3/noconflict/ace.js"></script>
+		<title>µS</title>
+	</head>
+	<body>
+		<div id="login" class="container" style="display:none">
+			<form class="panel">
+				<label>Password</label>
+				<input type="password" name="password" required>
+				<div class="submit">
+					<button type="submit">
+						Iniciar sesión
+					</button>
+				</div>
+			</form>
+		</div>
+		<div id="main" style="display:none">
+			<div id="toolbar">
+				<ul>
+					<li class="text">
+						<span style="color:#0f0">µS</span> &nbsp;|&nbsp; Uptime: <span id="uptime"></span>
+					</li>
+				</ul>
+				<ul>
+					<li>
+						<a id="saveScript">Guardar &amp; Compilar</a>
+					</li>
+					<li>
+						<a id="runScript">Ejecutar</a>
+					</li>
+					<li>
+						<select id="scriptTrigger">
+							<option value="manual">Manual</option>
+							<option value="boot">Al inicio</option>
+							<option value="interval">Periódico</option>
+						</select>
+					</li>
+					<li style="display:none">
+						<input id="scriptInterval" type="number" min="1" max="3600" value="30">
+					</li>
+					<li>
+						<a id="removeScript">Eliminar</a>
+					</li>
+				</ul>
+				<ul>
+					<li class="text">
+						Hora del server: <span id="time"></span>
+					</li>
+					<li class="right">
+						<a id="refreshKonsole">
+							Refrescar
+						</a>
+						|
+						<a id="restart">
+							Reiniciar
+						</a>
+						|
+						<a id="logout">
+							Salir
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div id="wrapper">
+				<div id="scripts">
+					<nav></nav>
+					<a id="addScript" class="add">Añadir Script</a>
+				</div>
+				<div id="editor"></div>
+				<div id="konsole"></div>
+			</div>
+		</div>
+	</body>
+</html>
