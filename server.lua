@@ -31,7 +31,7 @@ local BufferedConnection = function(connection)
 			end
 			newsize = self.size + payload:len()
 		end
-		    
+			
 		local plen = payload:len()
 		if plen == flushthreshold then
 			table.insert(self.data, payload)
@@ -158,7 +158,7 @@ return function(App)
 				if connectionThreadStatus == "suspended" then
 					local status, err = coroutine.resume(connectionThread)
 					if not status then
-						print(err)
+						print("Error: ", err)
 					end
 				elseif connectionThreadStatus == "dead" then
 					connection:close()

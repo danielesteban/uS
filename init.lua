@@ -33,19 +33,22 @@ print("==============================")
 tmr.alarm(0, 3000, tmr.ALARM_AUTO, function()
 	local ip = wifi.sta.getip() or wifi.ap.getip()
 	if ip == nil and joinCounter < joinMaxAttempts then
-		print('Conectando a: ' .. Config.wifi.ssid .. '...')
+		if joinCounter == 0 then
+			print("Conectando a: " .. Config.wifi.ssid .. "...")
+		end
 		joinCounter = joinCounter + 1
 	else
 		tmr.stop(0)
 		if joinCounter == joinMaxAttempts then
-			print('FAIL! Reseteando config...')
+			print("FAIL! Reseteando config...")
 			file.remove("config.lc")
 			node.restart()
 			return
 		end
-		print('IP: ', ip)
-		print("==============================")
 		local App = Config.app
+		print("Host: ", App.host .. ".local")
+		print("IP:   ", ip)
+		print("==============================")
 		mdns.register(App.host, {
 			description = "µS",
 			service = "http",
@@ -63,7 +66,7 @@ tmr.alarm(0, 3000, tmr.ALARM_AUTO, function()
 		if App.id == "setup" then
 			dofile("server.lc")(App)
 		else
-			sntp.sync('es.pool.ntp.org', function(sec, usec)
+			sntp.sync("es.pool.ntp.org", function(sec, usec)
 				App.boot = {sec, usec}
 				dofile("server.lc")(App)
 			end)

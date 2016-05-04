@@ -91,10 +91,13 @@ local EditScript = function(id, code)
 	suffix = nil
 	collectgarbage()
 	file.remove(name .. ".lc")
-	if pcall(node.compile, name .. "_bytecode.lua") then
+	local status, err = pcall(node.compile, name .. "_bytecode.lua")
+	if status then
 		file.rename(name .. "_bytecode.lc", name .. ".lc")
 	else
-		print("ERROR compiling: " .. id)
+		print("Error al compilar: " .. id .. ".lua")
+		print(err)
+		print("==============================")
 	end
 	file.remove(name .. "_bytecode.lua")
 end
@@ -201,12 +204,12 @@ return function(App)
 				return
 			end
 			if data.silent == 0 then
-				print(id .. ".lc")
+				print("Ejecutando: " .. id .. ".lc")
 				print("------------------------------")
 			end
 			if file.open("script_" .. id .. ".lc") == nil then
 				if data.silent == 0 then
-					print("Error: File not found")
+					print("Error: El script no existe o no ha sido compilado")
 					print("==============================")
 				end
 			else
@@ -217,7 +220,7 @@ return function(App)
 					connection:send("1")
 				end
 				if data.silent == 0 then
-					if status == false then
+					if not status then
 						print("Error: ", err)
 					end
 					print("==============================")

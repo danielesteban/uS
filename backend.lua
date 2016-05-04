@@ -25,12 +25,12 @@ local RunScripts = function(boot)
 	for id,data in pairs(scripts) do
 		if (data.trigger == 'interval' or (boot and data.trigger == 'boot')) and RunCounter % data.interval == 0 then
 			if data.silent == 0 then
-				print(id .. ".lc")
+				print("Ejecutando: " .. id .. ".lc")
 				print("------------------------------")
 			end
 			if file.open("script_" .. id .. ".lc") == nil then
 				if data.silent == 0 then
-					print("Error: File not found")
+					print("Error: El script no existe o no ha sido compilado")
 					print("==============================")
 				end
 			else
@@ -38,7 +38,7 @@ local RunScripts = function(boot)
 				local script = dofile("script_" .. id .. ".lc")
 				local status, err = pcall(script, data)
 				if data.silent == 0 then
-					if status == false then
+					if not status then
 						print("Error: ", err)
 					end
 					print("==============================")

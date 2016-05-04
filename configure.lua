@@ -2,7 +2,7 @@
 
 local Networks
 if file.open("networks.json", "r") == nil then
-	print("Scanning for networks...")
+	print("Buscando redes...")
 	wifi.setmode(wifi.STATION)
 	wifi.sta.getap({}, 1, function(networks)
 		file.open("networks.json", "w+")

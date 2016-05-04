@@ -210,9 +210,10 @@ var Main = function(status) {
 	document.getElementById('restart').addEventListener('click', function() {
 		if(!confirm("¿Estás seguro?")) return;
 		Api('restart', []);
-		setInterval(function() {
+		refreshTimeout && clearTimeout(refreshTimeout);
+		setTimeout(function() {
 			window.location.reload();
-		}, 1000);
+		}, 10000);
 	});
 
 	document.getElementById('logout').addEventListener('click', function() {
