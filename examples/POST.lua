@@ -1,13 +1,11 @@
 -- Power-on self-test
  
-local timezone = 1 -- GMT +01
-local dst = true   -- Daylight Saving Time
+_G.timezone = 1 -- GMT +01
+_G.dst = true   -- Daylight Saving Time
  
-local now = timetable(time(), timezone, dst)
+local now = timetable(time(), _G.timezone, _G.dst)
 log("Fecha:    " .. now:date())
 log("Hora:     " .. now:time())
-timezone = nil
-dst = nil
 now = nil
 collectgarbage()
  

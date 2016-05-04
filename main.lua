@@ -95,7 +95,8 @@ local EditScript = function(id, code)
 	if status then
 		file.rename(name .. "_bytecode.lc", name .. ".lc")
 	else
-		print("Error al compilar: " .. id .. ".lua")
+		print("> Error al compilar: " .. id .. ".lua")
+		print("------------------------------")
 		print(err)
 		print("==============================")
 	end
@@ -204,7 +205,7 @@ return function(App)
 				return
 			end
 			if data.silent == 0 then
-				print("Ejecutando: " .. id .. ".lc")
+				print("> Ejecutando: " .. id .. ".lc")
 				print("------------------------------")
 			end
 			if file.open("script_" .. id .. ".lc") == nil then

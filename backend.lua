@@ -25,7 +25,7 @@ local RunScripts = function(boot)
 	for id,data in pairs(scripts) do
 		if (data.trigger == 'interval' or (boot and data.trigger == 'boot')) and RunCounter % data.interval == 0 then
 			if data.silent == 0 then
-				print("Ejecutando: " .. id .. ".lc")
+				print("> Ejecutando: " .. id .. ".lc")
 				print("------------------------------")
 			end
 			if file.open("script_" .. id .. ".lc") == nil then
