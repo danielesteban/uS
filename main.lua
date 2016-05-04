@@ -34,32 +34,49 @@ end
 
 local EditScript = function(id, code)
 	local name = "script_" .. id
-	file.open(name .. ".lua", "w")
+	local boilerplate = {
+		"if ScriptsGlobalScope == nil then ScriptsGlobalScope = {} end",
+		"if ScriptScope_" .. id .. " == nil then ScriptScope_" .. id .. " = {} end",
+		"local _G=ScriptsGlobalScope",
+		"local collectgarbage=collectgarbage",
+		"local coroutine=coroutine",
+		"local gpio=gpio",
+		"local heap=node.heap",
+		"local http=http",
+		"local print=print",
+		"local rtctime=rtctime",
+		"local string=string",
+		"local table=table",
+		"local ws2812=ws2812",
+		"setfenv(1, ScriptScope_" .. id .. ")"
+	}
 	for i,line in ipairs(code) do
+		local mode
+		if i == 1 then mode = "w" else mode = "a+" end
+		file.open(name .. ".lua", mode)
 		file.writeline(line)
+		file.close()
 	end
-	file.close()
-	file.open(name .. "_bytecode.lua", "w")
-	file.writeline("if ScriptScope_" .. id .. " == nil then ScriptScope_" .. id .. " = {} end")
-	file.writeline("local collectgarbage=collectgarbage")
-	file.writeline("local gpio=gpio")
-	file.writeline("local heap=node.heap")
-	file.writeline("local http=http")
-	file.writeline("local print=print")
-	file.writeline("local rtctime=rtctime")
-	file.writeline("local string=string")
-	file.writeline("local table=table")
-	file.writeline("local ws2812=ws2812")
-	file.writeline("setfenv(1, ScriptScope_" .. id .. ")")
+	for i,line in ipairs(boilerplate) do
+		local mode
+		if i == 1 then mode = "w" else mode = "a+" end
+		file.open(name .. "_bytecode.lua", mode)
+		file.writeline(line)
+		file.close()
+	end
+	boilerplate = nil
+	collectgarbage()
 	for i,line in ipairs(code) do
+		file.open(name .. "_bytecode.lua", "a+")
 		file.writeline(line)
+		file.close()
 	end
-	file.close()
+	code = nil
+	collectgarbage()
+	file.remove(name .. ".lc")
 	if pcall(node.compile, name .. "_bytecode.lua") then
-		file.remove(name .. ".lc")
 		file.rename(name .. "_bytecode.lc", name .. ".lc")
 	else
-		file.remove(name .. ".lc")
 		print("ERROR compiling: " .. id)
 	end
 	file.remove(name .. "_bytecode.lua")

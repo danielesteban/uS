@@ -1,3 +1,4 @@
 .DS_Store
 .sass-cache/
-screen.css
+util/build/
+util/node_modules/

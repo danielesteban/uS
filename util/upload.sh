@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SERIALPORT=${1:-"/dev/cu.usbserial"}
-LUATOOL="python ./util/luatool/luatool/luatool.py -p $SERIALPORT -b 115200 --delay 0.05"
+LUATOOL="python ./util/luatool/luatool/luatool.py -p $SERIALPORT -b 115200 --delay 0.1"
 
 echo $'\nHi!'
 echo "This will wipe the entire flash memory..."
@@ -13,12 +13,15 @@ read -p $'Press any key to continue...\n\n'
 $LUATOOL -w
 
 #Static files
-$LUATOOL -f lib.js
-$LUATOOL -f screen.css
-$LUATOOL -f setup.html
-$LUATOOL -f setup.js
-$LUATOOL -f main.html
-$LUATOOL -f main.js
+if [ -d "util/build/" ]; then
+	STATIC="util/build/"
+fi
+$LUATOOL -f ${STATIC}lib.js
+$LUATOOL -f ${STATIC}screen.css
+$LUATOOL -f ${STATIC}setup.html
+$LUATOOL -f ${STATIC}setup.js
+$LUATOOL -f ${STATIC}main.html
+$LUATOOL -f ${STATIC}main.js
 
 #App code
 $LUATOOL -f configure.lua -c
