@@ -9,7 +9,7 @@ A general purpouse web server/ide for the esp8266
 
 * Clone this repo and it's submodules.
 
-  ```git --recursive https://github.com/danielesteban/uS.git && cd uS```
+  ```git clone --recursive https://github.com/danielesteban/uS.git && cd uS```
 
 * Connect your esp8266 to the computer trough a serial to usb adapter (or similar).
 
