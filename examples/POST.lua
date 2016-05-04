@@ -11,5 +11,5 @@ dst = nil
 now = nil
 collectgarbage()
  
-log("Heap:     " .. heap())
-log("GC Count: " .. collectgarbage("count"))
+log("Heap:     " .. heap() .. " bytes")
+log("GC Count: " .. collectgarbage("count") .. " kilobytes")

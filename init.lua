@@ -35,6 +35,7 @@ tmr.alarm(0, 3000, tmr.ALARM_AUTO, function()
 	if ip == nil and joinCounter < joinMaxAttempts then
 		if joinCounter == 0 then
 			print("Conectando a: " .. Config.wifi.ssid .. "...")
+			print("------------------------------")
 		end
 		joinCounter = joinCounter + 1
 	else
@@ -46,8 +47,8 @@ tmr.alarm(0, 3000, tmr.ALARM_AUTO, function()
 			return
 		end
 		local App = Config.app
-		print("Host: ", App.host .. ".local")
-		print("IP:   ", ip)
+		print("Host:     " .. App.host .. ".local")
+		print("IP:       " .. ip)
 		print("==============================")
 		mdns.register(App.host, {
 			description = "µS",
