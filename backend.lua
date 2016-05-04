@@ -24,12 +24,26 @@ local RunScripts = function(boot)
 
 	for id,data in pairs(scripts) do
 		if (data.trigger == 'interval' or (boot and data.trigger == 'boot')) and RunCounter % data.interval == 0 then
-			if data.interval >= 10 then print(id .. ".lc") end
-			local status, err = pcall(dofile, "script_" .. id .. ".lc")
-			if status == false then
-				print("Error: ", err)
+			if data.silent == 0 then
+				print(id .. ".lc")
+				print("------------------------------")
 			end
-			if data.interval >= 10 or status == false then print("==============================") end
+			if file.open("script_" .. id .. ".lc") == nil then
+				if data.silent == 0 then
+					print("Error: File not found")
+					print("==============================")
+				end
+			else
+				file.close()
+				local script = dofile("script_" .. id .. ".lc")
+				local status, err = pcall(script, data)
+				if data.silent == 0 then
+					if status == false then
+						print("Error: ", err)
+					end
+					print("==============================")
+				end
+			end
 		end
 	end
 end

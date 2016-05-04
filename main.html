@@ -22,10 +22,10 @@
 			</form>
 		</div>
 		<div id="main" style="display:none">
-			<div id="toolbar">
+			<div class="toolbar">
 				<ul>
 					<li class="text">
-						<span style="color:#0f0">µS</span> &nbsp;|&nbsp; Uptime: <span id="uptime"></span>
+						<span style="color:#0f0">µS</span>
 					</li>
 				</ul>
 				<ul>
@@ -46,22 +46,19 @@
 						<input id="scriptInterval" type="number" min="1" max="3600" value="30">
 					</li>
 					<li>
+						<label class="checkbox">
+							<input id="scriptSilent" type="checkbox"> Silenciar
+						</label>
+					</li>
+					<li>
 						<a id="removeScript">Eliminar</a>
 					</li>
 				</ul>
 				<ul>
 					<li class="text">
-						Hora del server: <span id="time"></span>
+						Uptime: <span id="uptime"></span>
 					</li>
 					<li class="right">
-						<a id="refreshKonsole">
-							Refrescar
-						</a>
-						|
-						<a id="restart">
-							Reiniciar
-						</a>
-						|
 						<a id="logout">
 							Salir
 						</a>
@@ -75,6 +72,30 @@
 				</div>
 				<div id="editor"></div>
 				<div id="konsole"></div>
+			</div>
+			<div class="toolbar bottom">
+				<ul>
+					<li class="text">
+						&nbsp;
+					</li>
+				</ul>
+				<ul>
+					<li class="text">
+						&nbsp;
+					</li>
+				</ul>
+				<ul>
+					<li>
+						<a id="refreshKonsole">
+							Refrescar
+						</a>
+					</li>
+					<li class="right">
+						<a id="restart">
+							Reiniciar
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</body>

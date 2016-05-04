@@ -1,7 +1,7 @@
 #!/bin/sh
 
 SERIALPORT=${1:-"/dev/cu.usbserial"}
-LUATOOL="python ./util/luatool/luatool/luatool.py -p $SERIALPORT -b 115200 --delay 0.1"
+LUATOOL="python ./util/luatool/luatool/luatool.py -p $SERIALPORT -b 115200 --delay 0.15"
 
 echo $'\nHi!'
 echo "This will wipe the entire flash memory..."
@@ -30,6 +30,7 @@ $LUATOOL -f server.lua -c
 $LUATOOL -f setup.lua -c
 $LUATOOL -f main.lua -c
 $LUATOOL -f backend.lua -c
+$LUATOOL -f timetable.lua -c
 $LUATOOL -f init.lua -r
 
 echo $'\nI\'m done here. Thank you!\n'

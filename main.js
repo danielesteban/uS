@@ -5,27 +5,21 @@ var Main = function(status) {
 		status[epoch] = status[epoch][0] * 1000 + status[epoch][1] / 1000;
 	});
 
-	var time = document.getElementById('time'),
-		uptime = document.getElementById('uptime'),
+	var uptime = document.getElementById('uptime'),
 		timeDiff = (new Date() * 1) - status.epoch,
 		updateTime = function() {
 			var server = (new Date() * 1) - timeDiff,
-				now = new Date(server),
+				up = (server - status.boot) / 1000,
 				fmt = function(n) {
 					n = n + '';
 					return (n < 10 ? '0' : '') + n;
-				};
-
-			while(time.firstChild) time.removeChild(time.firstChild);
-			time.appendChild(document.createTextNode(fmt(now.getHours()) + ':' + fmt(now.getMinutes()) + ':' + fmt(now.getSeconds())));
-
-			var up = (server - status.boot) / 1000,
-				hour = Math.floor(up / 3600),
-				min = Math.floor(up % 3600 / 60),
-				sec = Math.floor(up % 60);
+				},
+				hour = fmt(Math.floor(up / 3600)),
+				min = fmt(Math.floor(up % 3600 / 60)),
+				sec = fmt(Math.floor(up % 60));
 
 			while(uptime.firstChild) uptime.removeChild(uptime.firstChild);
-			uptime.appendChild(document.createTextNode(fmt(hour) + ':' + fmt(min) + ':' + fmt(sec)));
+			uptime.appendChild(document.createTextNode(hour + ':' + min + ':' + sec));
 		};
 
 	setInterval(updateTime, 250);
@@ -39,6 +33,7 @@ var Main = function(status) {
 	var scripts = document.getElementById('scripts').getElementsByTagName('nav')[0],
 		scriptTrigger = document.getElementById('scriptTrigger'),
 		scriptInterval = document.getElementById('scriptInterval'),
+		scriptSilent = document.getElementById('scriptSilent'),
 		loadingScript = false,
 		activeScript = null,
 		loadScript = function(id) {
@@ -54,6 +49,7 @@ var Main = function(status) {
 				scriptTrigger.value = status.scripts[id].trigger;
 				scriptInterval.value = status.scripts[id].interval;
 				scriptInterval.parentNode.style.display = status.scripts[id].trigger == 'interval' ? '' : 'none';
+				scriptSilent.checked = status.scripts[id].silent == 1;
 				editor.setValue(code, 1);
 			}, true);
 		},
@@ -76,7 +72,12 @@ var Main = function(status) {
 			}
 		},
 		saveScriptData = function() {
-			Api('editScript', [activeScript, status.scripts[activeScript].trigger, status.scripts[activeScript].interval], function(response) {
+			Api('editScript', [
+				activeScript,
+				status.scripts[activeScript].trigger,
+				status.scripts[activeScript].interval,
+				status.scripts[activeScript].silent
+			], function(response) {
 				status.scripts = response;
 				updateScripts();
 			});
@@ -95,6 +96,12 @@ var Main = function(status) {
 		saveScriptData()
 	});
 
+	scriptSilent.addEventListener('change', function() {
+		if(activeScript === null) return;
+		status.scripts[activeScript].silent = this.checked ? 1 : 0;
+		saveScriptData()
+	});
+
 	updateScripts();
 	for(var id in status.scripts) {
 		loadScript(id);
@@ -106,7 +113,12 @@ var Main = function(status) {
 		if(activeScript === null || savingScript) return;
 		savingScript = true;
 		konsolePrint("Guardando & Compilando: " + activeScript + ".lc");
-		Api('editScript', [activeScript, status.scripts[activeScript].trigger, status.scripts[activeScript].interval].concat(editor.getValue().split('\n')), function(response) {
+		Api('editScript', [
+			activeScript,
+			status.scripts[activeScript].trigger,
+			status.scripts[activeScript].interval,
+			status.scripts[activeScript].silent
+		].concat(editor.getValue().split('\n')), function(response) {
 			status.scripts = response;
 			updateScripts();
 			savingScript = false;
@@ -138,6 +150,7 @@ var Main = function(status) {
 		scriptTrigger.value = 'manual';
 		scriptInterval.value = 30;
 		scriptInterval.parentNode.style.display = 'none';
+		scriptSilent.checked = false;
 		editor.setValue('');
 		Api('removeScript', [name], function(response) {
 			status.scripts = response;
@@ -156,7 +169,7 @@ var Main = function(status) {
 		var name = window.prompt("Nombre del script");
 		if(!name) return;
 		addingScript = true;
-		Api('editScript', [name, 'manual', 30], function(response) {
+		Api('editScript', [name, 'manual', 30, 0], function(response) {
 			status.scripts = response;
 			updateScripts();
 			addingScript = false;

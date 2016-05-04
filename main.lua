@@ -24,7 +24,8 @@ local Scripts = function()
 			if data[id] == nil then
 				data[id] = {
 					trigger = "manual",
-					interval = 30
+					interval = 30,
+					silent = 0
 				}
 			end
 		end
@@ -34,21 +35,28 @@ end
 
 local EditScript = function(id, code)
 	local name = "script_" .. id
-	local boilerplate = {
+	local prefix = {
+		"return function(config)",
 		"if ScriptsGlobalScope == nil then ScriptsGlobalScope = {} end",
 		"if ScriptScope_" .. id .. " == nil then ScriptScope_" .. id .. " = {} end",
 		"local _G=ScriptsGlobalScope",
 		"local collectgarbage=collectgarbage",
-		"local coroutine=coroutine",
 		"local gpio=gpio",
 		"local heap=node.heap",
 		"local http=http",
 		"local print=print",
-		"local rtctime=rtctime",
 		"local string=string",
 		"local table=table",
+		"local time=rtctime.get",
+		"local timetable=dofile('timetable.lc')",
 		"local ws2812=ws2812",
+		"local log=function(...)",
+		"if config.silent == 0 then print(...) end",
+		"end",
 		"setfenv(1, ScriptScope_" .. id .. ")"
+	}
+	local suffix = {
+		"end"
 	}
 	for i,line in ipairs(code) do
 		local mode
@@ -57,14 +65,14 @@ local EditScript = function(id, code)
 		file.writeline(line)
 		file.close()
 	end
-	for i,line in ipairs(boilerplate) do
+	for i,line in ipairs(prefix) do
 		local mode
 		if i == 1 then mode = "w" else mode = "a+" end
 		file.open(name .. "_bytecode.lua", mode)
 		file.writeline(line)
 		file.close()
 	end
-	boilerplate = nil
+	prefix = nil
 	collectgarbage()
 	for i,line in ipairs(code) do
 		file.open(name .. "_bytecode.lua", "a+")
@@ -72,6 +80,13 @@ local EditScript = function(id, code)
 		file.close()
 	end
 	code = nil
+	collectgarbage()
+	for i,line in ipairs(suffix) do
+		file.open(name .. "_bytecode.lua", "a+")
+		file.writeline(line)
+		file.close()
+	end
+	suffix = nil
 	collectgarbage()
 	file.remove(name .. ".lc")
 	if pcall(node.compile, name .. "_bytecode.lua") then
@@ -134,7 +149,7 @@ return function(App)
 				chunk = nil
 				if bytesSent == size then continue = false end
 			end
-		elseif params[2] == "editScript" and #params >= 5 then
+		elseif params[2] == "editScript" and #params >= 6 then
 			local id = params[3]
 			local scripts = Scripts()
 			if scripts[id] == nil then
@@ -142,9 +157,10 @@ return function(App)
 			end
 			scripts[id].trigger = params[4]
 			scripts[id].interval = tonumber(params[5])
-			if #params > 5 then
+			scripts[id].silent = tonumber(params[6])
+			if #params > 6 then
 				local code = {}
-				for i=6,#params do
+				for i=7,#params do
 					table.insert(code, params[i])
 				end
 				EditScript(id, code)
@@ -175,15 +191,36 @@ return function(App)
 			SendHeader(connection)
 			connection:send(json)
 		elseif params[2] == "runScript" and params[3] then
-			print(params[3] .. ".lc")
-			local status, err = pcall(dofile, "script_" .. params[3] .. ".lc")
+			local scripts = Scripts()
+			local id = params[3]
+			local data = scripts[id]
 			SendHeader(connection)
-			if status then
-				connection:send("1")
-			else
-				print("Error: ", err)
+			if data == nil then
+				return
 			end
-			print("==============================")
+			if data.silent == 0 then
+				print(id .. ".lc")
+				print("------------------------------")
+			end
+			if file.open("script_" .. id .. ".lc") == nil then
+				if data.silent == 0 then
+					print("Error: File not found")
+					print("==============================")
+				end
+			else
+				file.close()
+				local script = dofile("script_" .. id .. ".lc")
+				local status, err = pcall(script, data)
+				if status then
+					connection:send("1")
+				end
+				if data.silent == 0 then
+					if status == false then
+						print("Error: ", err)
+					end
+					print("==============================")
+				end
+			end
 		elseif params[2] == "restart" then
 			node.restart()
 		else

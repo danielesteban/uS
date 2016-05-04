@@ -116,14 +116,15 @@ html.main
 
 #main
 	padding-top: 30px
-	#toolbar, #wrapper
+	padding-bottom: 30px
+	.toolbar, #wrapper
 		&:before, &:after
 			display: table
 			content: " "
 		&:after
 			clear: both
 
-	#toolbar > ul, #wrapper > div
+	.toolbar > ul, #wrapper > div
 		float: left
 		&:nth-child(1)
 			width: 15%
@@ -132,7 +133,7 @@ html.main
 		&:nth-child(3)
 			width: 30%
 	
-	#toolbar
+	.toolbar
 		position: absolute
 		top: 0
 		left: 0
@@ -140,6 +141,11 @@ html.main
 		height: 30px
 		background: #161713
 		border-bottom: 1px solid #3c3d38
+		&.bottom
+			top: auto
+			bottom: 0
+			border-bottom: none
+			border-top: 1px solid #3c3d38
 		ul
 			list-style-type: none
 			margin: 0
@@ -151,6 +157,10 @@ html.main
 			a, li.text
 				display: inline-block
 				padding: 5px 5px 6px
+		select, input[type="number"], label.checkbox
+			margin: 0 5px
+		label.checkbox
+			display: inline
 
 	#wrapper
 		&, > div
@@ -177,4 +187,5 @@ html.main
 				padding: 5px
 				background: rgba(0, 0, 0, .6)
 				color: #0f0
+				font-family: "Andale Mono", "Courier", monospace
 				overflow-y: auto
