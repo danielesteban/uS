@@ -23,6 +23,8 @@ A general purpouse web server/ide for the esp8266
   This is just a precompiled version of the [nodemcu-firmware dev branch](https://github.com/nodemcu/nodemcu-firmware/tree/dev)
   with the required modules. Which are: CJSON, FILE, GPIO, HTTP, MDNS, NET, NODE, RTCTIME, SNTP, TMR, WIFI & WS2812.
 
+* Detach GPIO0 from the ground rail and reset the esp8266.
+
 * Build/Optimize the static files.
 
   ```npm install --prefix ./util/ closurecompiler fs-extra node-sass && ./util/build.js```
